@@ -15,6 +15,7 @@ class OrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'address_id' => 'required|numeric',
+            'total' => 'required',
             'payment_method' => 'required|in:1,2',
             'use_points' => 'nullable|boolean'
         ]);
@@ -58,7 +59,7 @@ class OrderController extends Controller
         $order->vat = 0;
         $order->discount = 0;
         $order->points = 0;
-        $order->total = 0;
+        $order->total = $request->total;
         $order->status = 'New';
         $order->save();
 

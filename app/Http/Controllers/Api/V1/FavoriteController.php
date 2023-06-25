@@ -111,8 +111,8 @@ class FavoriteController extends Controller
             $product = Product::find($favorite->product_id);
             if ($product) {
                 $result[] = [
-                    'id' => $favorite->id,
-                    'product' => [
+                    'id_fav' => $favorite->id,
+                    'porduct' => [
                         'id' => $product->id,
                         'price' => $product->price,
                         'old_price' => $product->old_price,
@@ -129,8 +129,8 @@ class FavoriteController extends Controller
             'status' => true,
             'message' => null,
             'data' => [
+                'favorites_porduct' => $result,
                 'current_page' => $favorites->currentPage(),
-                'data' => $result,
                 'first_page_url' => $favorites->url(1),
                 'from' => $favorites->firstItem(),
                 'last_page' => $favorites->lastPage(),

@@ -174,4 +174,104 @@ class CartController extends Controller
             ],
         ]);
     }
+
+
+    public function deleteCart(Request $request, $pk)
+{
+    // Check if the Authorization header exists
+    if (!$request->header('Authorization')) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Authorization header not found',
+            'data' => null,
+        ], 401);
+    }
+
+    // Extract the token from the Authorization header
+    $token = str_replace('Bearer ', '', $request->header('Authorization'));
+
+    try {
+        // Validate the token and get the authenticated user
+        $user = JWTAuth::setToken($token)->authenticate();
+    } catch (\Exception $e) {
+        // If an exception occurs, return a 401 Unauthorized response
+        return response()->json([
+            'status' => false,
+            'message' => 'Not authorized',
+            'data' => null,
+        ], 401);
+    }
+
+    // Find the cart item
+    $cartItem = Cart::where('id', $pk)->where('user_id', $user->id)->first();
+
+    if (!$cartItem) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Cart item not found',
+            'data' => null,
+        ], 404);
+    }
+
+    $product = Product::find($cartItem->product_id);
+
+    if (!$product) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Product not found',
+            'data' => null,
+        ], 404);
+    }
+
+    // Update the product stock
+    $product->pro_count += $cartItem->quantity;
+    $product->save();
+
+    // Delete the cart item
+    $cartItem->delete();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Cart item deleted successfully',
+        'data' => $cartItem,
+    ]);
+}
+
+public function deleteAllCart(Request $request)
+{
+    // Check if the Authorization header exists
+    if (!$request->header('Authorization')) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Authorization header not found',
+            'data' => null,
+        ], 401);
+    }
+
+    // Extract the token from the Authorization header
+    $token = str_replace('Bearer ', '', $request->header('Authorization'));
+
+    try {
+        // Validate the token and get the authenticated user
+        $user = JWTAuth::setToken($token)->authenticate();
+    } catch (\Exception $e) {
+        // If an exception occurs, return a 401 Unauthorized response
+        return response()->json([
+            'status' => false,
+            'message' => 'Not authorized',
+            'data' => null,
+        ], 401);
+    }
+
+    // Delete all cart items for the authenticated user
+    Cart::where('user_id', $user->id)->delete();
+
+    return response()->json([
+        'status' => true,
+        'message' => 'All cart items deleted successfully',
+        'data' => null,
+    ]);
+}
+
+
 }

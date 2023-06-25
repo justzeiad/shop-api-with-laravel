@@ -51,6 +51,8 @@ class UserController extends Controller
                 'points' => $user->points,
                 'credit' => $user->credit,
                 'role' => $user->role,
+                'address' => $user->address_id ? true: false,
+                'address_id' => $user->address_id,
                 'token' => $token,
             ]
         ]);

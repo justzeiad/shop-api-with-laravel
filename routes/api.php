@@ -115,6 +115,8 @@ Route::prefix('v1/favorites')->group(function () {
 Route::prefix('v1/carts')->group(function () {
     Route::post('cart', [CartController::class, 'toggleCart']);
     Route::get('get-cart', [CartController::class, 'getCart']);
+    Route::post('delete/{pk}', [CartController::class, 'deleteCart']);
+    Route::post('delete-all', [CartController::class, 'deleteAllCart']);
 });
 
 Route::prefix('v1/orders')->group(function () {
